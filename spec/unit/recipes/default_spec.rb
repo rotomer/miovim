@@ -7,14 +7,16 @@
 require 'spec_helper'
 
 describe 'miovim::default' do
-  context 'When all attributes are default, on an unspecified platform' do
+    context 'When all attributes are default, on ubuntu 16.04 platform' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new
+      runner = ChefSpec::SoloRunner.new(
+          platform: 'ubuntu',
+          version: 16.04 )
       runner.converge(described_recipe)
     end
 
     it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
+      expect(chef_run).to install_package('vim')
     end
   end
 end
