@@ -15,7 +15,7 @@ describe 'miovim::default' do
       runner.converge(described_recipe)
     end
 
-    it 'converges successfully' do
+    it 'installed successfully' do
       expect(chef_run).to install_package('vim')
     end
   end
@@ -26,7 +26,7 @@ describe 'miovim::default' do
                 version: 6.3)
             runner.converge(described_recipe)
         end
-        it 'converges successfully' do
+        it 'installed successfully' do
             expect(chef_run).to install_package('vim-enhanced')
         end
     end
