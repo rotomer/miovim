@@ -28,6 +28,7 @@ describe 'miovim::default' do
         end
         it 'installed successfully' do
             expect(chef_run).to install_package('vim-enhanced')
+            expect(chef_run).to create_template('~/.vimrc')
         end
     end
         

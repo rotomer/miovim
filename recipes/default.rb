@@ -7,3 +7,7 @@
 
 
 package node['miovim']['package'] 
+
+template '~/.vimrc' do
+    source 'vimrc.erb'
+end
