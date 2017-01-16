@@ -8,6 +8,6 @@
 
 package node['miovim']['package'] 
 
-template '~/.vimrc' do
+template "#{node['miovim']['home']}/.vimrc" do
     source 'vimrc.erb'
 end

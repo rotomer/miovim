@@ -7,11 +7,13 @@
 require 'spec_helper'
 
 describe 'miovim::default' do
-    context 'When all attributes are default, on ubuntu 16.04 platform' do
+    context 'When on ubuntu 16.04 platform' do
     let(:chef_run) do
-      runner = ChefSpec::SoloRunner.new(
-          platform: 'ubuntu',
-          version: 16.04 )
+            runner = ChefSpec::SoloRunner.new(
+                platform: 'ubuntu',
+                version: '16.04') do |node|
+                node.normal['miovim']['home'] = '/home/mio'
+            end
       runner.converge(described_recipe)
     end
 
@@ -19,16 +21,18 @@ describe 'miovim::default' do
       expect(chef_run).to install_package('vim')
     end
   end
-    context 'When all attributes are default, on centos platform' do
+    context 'When on centos platform' do
         let(:chef_run) do
             runner = ChefSpec::SoloRunner.new(
                 platform: 'centos',
-                version: 6.3)
+                version: 6.3) do |node|
+                node.normal['miovim']['home'] = '/home/mio'
+            end
             runner.converge(described_recipe)
         end
         it 'installed successfully' do
             expect(chef_run).to install_package('vim-enhanced')
-            expect(chef_run).to create_template('~/.vimrc')
+            expect(chef_run).to create_template('/home/mio/.vimrc')
         end
     end
         
