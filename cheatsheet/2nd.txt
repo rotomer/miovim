@@ -1,0 +1,103 @@
+## CP no1 testing vundle and plugin installation #################
+## spec/unit/recipes/plugin_spec.rb ##############################
+
+require 'spec_helper'
+
+
+describe 'miovim::plugin' do
+
+        runner = ChefSpec::SoloRunner.new(
+            platform: 'ubuntu',
+            version: 16.04) do |node|
+            node.normal['miovim']['home'] = '/home/mio' 
+            node.normal['miovim']['vim']['home'] = "#{node['miovim']['home']}/.vim" 
+        end
+        
+        let(:chef_run) do
+            runner.converge(described_recipe)
+        end
+
+        it 'install vundle' do
+            expect(chef_run).to create_directory('/home/mio/.vim/bundle')
+            expect(chef_run).to install_package('git')
+            expect(chef_run).to sync_git('/home/mio/.vim/bundle/Vundle.vim')
+        end
+            
+        it 'configure vundle' do
+            expect(chef_run).to create_directory('/home/mio/.vim/config')
+            expect(chef_run).to create_template('/home/mio/.vim/config/vundle.vim')
+            expect(chef_run).to run_ruby_block('insert source vundle')
+        end
+
+        it 'install fugitive plugin' do
+           expect(chef_run).to run_ruby_block('install fugitive plugin')
+        end
+    end
+
+###############################################################################
+
+## recepies/plugin.rb
+###############################
+
+package 'git'
+
+directory "#{node['miovim']['home']}/.vim/bundle" do
+    recursive true
+    action :create
+end
+
+git "#{node['miovim']['vim']['home']}/bundle/Vundle.vim" do
+    repository 'https://github.com/VundleVim/Vundle.vim.git'
+    revision 'master'
+    action :sync
+end
+
+directory "#{node['miovim']['vim']['home']}/config" do
+    recursive true
+    action :create
+end
+
+template "#{node['miovim']['vim']['home']}/config/vundle.vim" do
+    source 'vundle.vim.erb'
+end
+
+ruby_block 'insert source vundle' do
+    block do
+        file = Chef::Util::FileEdit.new("#{node['miovim']['home']}/.vimrc")
+        file.insert_line_if_no_match("/source #{node['miovim']['vim']['home']}\/config\/vundle.vim/", "source #{node['miovim']['vim']['home']}/config/vundle.vim")
+        file.write_file
+    end
+end
+
+
+ruby_block 'install fugitive plugin' do
+    block do
+        file = Chef::Util::FileEdit.new("#{node['miovim']['vim']['home']}/config/vundle.vim")
+        file.insert_line_after_match(/Plugin 'VundleVim\/Vundle.vim'/, "Plugin 'tpope/vim-fugitive'")
+        file.write_file
+    end
+end
+
+bash 'run_vim_PluginInstall' do
+    code 'vim +PluginInstall +qall'
+end
+
+#########################################################################################
+
+## CP no2 Adding gourds #################################################################
+## recipes/plugin.ruby  ###########
+
+    not_if "grep config\/vundle.vim #{node['miovim']['home']}/.vimrc"
+
+
+    not_if { ::File.readlines("#{node['miovim']['vim']['home']}/config/vundle.vim").grep("Plugin 'tpope/vim-fugitive'").any?}
+
+##########################################################################################
+## spec/unit/recipes/plugin.rb ###########################################################
+
+        before do
+            stub_command('grep config/vundle.vim /home/mio/.vimrc').and_return(false)
+            allow(File).to receive(:readlines).with('/home/mio/.vim/config/vundle.vim').and_return ['']
+        end
+
+##########################################################################################

@@ -28,13 +28,13 @@ describe 'miovim::plugin' do
             runner.converge(described_recipe)
         end
 
-        it 'vundle installed' do
+        it 'install vundle' do
             expect(chef_run).to create_directory('/home/mio/.vim/bundle')
             expect(chef_run).to install_package('git')
             expect(chef_run).to sync_git('/home/mio/.vim/bundle/Vundle.vim')
         end
             
-        it 'vundle configured' do
+        it 'configure vundle' do
             expect(chef_run).to create_directory('/home/mio/.vim/config')
             expect(chef_run).to create_template('/home/mio/.vim/config/vundle.vim')
             expect(chef_run).to run_ruby_block('insert source vundle')
@@ -46,6 +46,7 @@ describe 'miovim::plugin' do
     end
 
     context 'Vundle and Fugitive are installed' do
+        
         runner = ChefSpec::SoloRunner.new(
             platform: 'ubuntu',
             version: 16.04) do |node|
@@ -62,7 +63,7 @@ describe 'miovim::plugin' do
             runner.converge(described_recipe)
         end
         
-        it 'do not install vundle and fugitive plugin' do
+        it 'do not install and configure vundle and fugitive plugin' do
             expect(chef_run).to_not run_ruby_block('install fugitive plugin')
             expect(chef_run).to_not run_ruby_block('insert source vundle')
         end
