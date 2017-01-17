@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: miovim
-# Recipe:: default
+# Recipe:: vim
 #
 # Copyright (c) 2017 The Authors, All Rights Reserved.
 
