@@ -20,7 +20,6 @@ suites:
   - name: default
     run_list:
       - recipe[miovim::default]
-      - recipe[miovim::plugin]
     verifier:
       inspec_tests:
         - test/recipes
