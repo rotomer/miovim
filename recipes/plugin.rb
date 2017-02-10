@@ -30,14 +30,15 @@ ruby_block 'insert source vundle' do
     not_if "grep config\/vundle.vim #{node['miovim']['home']}/.vimrc"
 end
 
-
-ruby_block 'install fugitive plugin' do
-    block do
-        file = Chef::Util::FileEdit.new("#{node['miovim']['vim']['home']}/config/vundle.vim")
-        file.insert_line_after_match(/Plugin 'VundleVim\/Vundle.vim'/, "Plugin 'tpope/vim-fugitive'")
-        file.write_file
+node['miovim']['vim']['plugin_list'].each do |plugin|
+    ruby_block "install #{plugin} plugin" do
+        block do
+            file = Chef::Util::FileEdit.new("#{node['miovim']['vim']['home']}/config/vundle.vim")
+            file.insert_line_after_match(/Plugin 'VundleVim\/Vundle.vim'/, "Plugin '#{plugin}'")
+            file.write_file
+        end
+            not_if { ::File.readlines("#{node['miovim']['vim']['home']}/config/vundle.vim").grep("Plugin '#{plugin}'").any?}
     end
-    not_if { ::File.readlines("#{node['miovim']['vim']['home']}/config/vundle.vim").grep("Plugin 'tpope/vim-fugitive'").any?}
 end
 
 bash 'run_vim_PluginInstall' do
