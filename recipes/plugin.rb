@@ -1,7 +1,15 @@
 
+#  vim: set ft=ruby.chef:
+#
+# Cookbook Name:: miovim
+# Recipe:: plugin
+#
+# Copyright (c) 2017 The Authors, All Rights Reserved.
+
+
 package 'git'
 
-directory "#{node['miovim']['home']}/.vim/bundle" do
+directory "#{node['miovim']['vim']['home']}/bundle" do
     recursive true
     action :create
 end
@@ -31,18 +39,21 @@ ruby_block 'insert source vundle' do
 end
 
 node['miovim']['vim']['plugin_list'].each do |plugin|
-    ruby_block "install #{plugin} plugin" do
-        block do
-            file = Chef::Util::FileEdit.new("#{node['miovim']['vim']['home']}/config/vundle.vim")
-            file.insert_line_after_match(/Plugin 'VundleVim\/Vundle.vim'/, "Plugin '#{plugin}'")
-            file.write_file
-        end
-            not_if { ::File.readlines("#{node['miovim']['vim']['home']}/config/vundle.vim").grep("Plugin '#{plugin}'").any?}
+    miovim_vim_plugin plugin do
+        vim_home  node['miovim']['vim']['home']
     end
+#    ruby_block "install #{plugin} plugin" do
+#        block do
+#            file = Chef::Util::FileEdit.new("#{node['miovim']['vim']['home']}/config/vundle.vim")
+#            file.insert_line_after_match(/Plugin 'VundleVim\/Vundle.vim'/, "Plugin '#{plugin}'")
+#            file.write_file
+#        end
+#            not_if { ::File.readlines("#{node['miovim']['vim']['home']}/config/vundle.vim").grep("Plugin '#{plugin}'").any?}
+#    end
 end
 
-bash 'run_vim_PluginInstall' do
-    code 'vim +PluginInstall +qall'
-end
+#bash 'run_vim_PluginInstall' do
+#    code 'vim +PluginInstall +qall'
+#end
 
 

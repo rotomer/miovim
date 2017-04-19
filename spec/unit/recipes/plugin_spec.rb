@@ -43,7 +43,7 @@ describe 'miovim::plugin' do
 
         ['tpope/vim-fugitive', 'scrooloose/nerdtree', 'vim-ruby/vim-ruby', 't9md/vim-chef'].each do |plugin|
             it "install #{plugin} plugin" do
-                expect(chef_run).to run_ruby_block("install #{plugin} plugin")
+                expect(chef_run).to install_miovim_vim_plugin(plugin)
             end
         end
     end
