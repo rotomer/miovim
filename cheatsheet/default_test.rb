@@ -18,9 +18,9 @@ end
 
 describe file("/home/vagrant/.vimrc") do
     it { should exist }
-    its('content') { should match(%r{config/vundle.vim}) }
+#    its('content') { should match(%r{config/vundle.vim}) }
 end
-describe file("/home/vagrant/.vim/config/vundle.vim") do
-    it { should exist }
-    its('content') { should match(%r{tpope/vim-fugitive}) }
-end
+#describe file("/home/vagrant/.vim/config/vundle.vim") do
+#    it { should exist }
+#    its('content') { should match(%r{tpope/vim-fugitive}) }
+#end

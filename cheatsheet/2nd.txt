@@ -20,7 +20,7 @@ describe 'miovim::plugin' do
         it 'install vundle' do
             expect(chef_run).to create_directory('/home/mio/.vim/bundle')
             expect(chef_run).to install_package('git')
-            expect(chef_run).to sync_git('/home/mio/.vim/bundle/Vundle.vim')
+            expect(chef_run).to sync_git('/home/mio/.vim/bundle/Vundle.vim').with(repository: 'https://github.com/VundleVim/Vundle.vim.git')
         end
             
         it 'configure vundle' do
@@ -35,13 +35,18 @@ describe 'miovim::plugin' do
     end
 
 ###############################################################################
+## attributes/default.rb
+##############################
 
+default['miovim']['vim']['home'] = "#{node['miovim']['home']}/.vim"
+
+###############################################################################
 ## recepies/plugin.rb
 ###############################
 
 package 'git'
 
-directory "#{node['miovim']['home']}/.vim/bundle" do
+directory "#{node['miovim']['vim']['home']}/bundle" do
     recursive true
     action :create
 end
@@ -84,20 +89,19 @@ end
 
 #########################################################################################
 
-## CP no2 Adding gourds #################################################################
-## recipes/plugin.ruby  ###########
-
-    not_if "grep config\/vundle.vim #{node['miovim']['home']}/.vimrc"
-
-
-    not_if { ::File.readlines("#{node['miovim']['vim']['home']}/config/vundle.vim").grep("Plugin 'tpope/vim-fugitive'").any?}
-
-##########################################################################################
 ## spec/unit/recipes/plugin.rb ###########################################################
 
         before do
             stub_command('grep config/vundle.vim /home/mio/.vimrc').and_return(false)
             allow(File).to receive(:readlines).with('/home/mio/.vim/config/vundle.vim').and_return ['']
         end
+
+##########################################################################################
+## recipes/plugin.ruby  ###########
+
+    not_if "grep config\/vundle.vim #{node['miovim']['home']}/.vimrc"
+
+
+    not_if { ::File.readlines("#{node['miovim']['vim']['home']}/config/vundle.vim").grep("Plugin 'tpope/vim-fugitive'").any?}
 
 ##########################################################################################

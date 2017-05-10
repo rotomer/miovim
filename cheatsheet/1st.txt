@@ -33,17 +33,6 @@ end
 ###########################
 
 
-#CP no3 Adding centos
-## attributes/default.rb ############################
-
-case node['platform']
-when 'ubuntu'
-    default['miovim']['package'] = 'vim'
-when 'centos'
-    default['miovim']['package'] = 'vim-enhanced'
-end
-
-####################################################
 ## spec/unit/recipes/vim_spec.rb ###################
 
     context 'When on ubuntu 16.04 platform' do
@@ -67,6 +56,18 @@ end
     end
 
 ####################################
+#
+#CP no3 Adding centos
+## attributes/default.rb ############################
+
+case node['platform']
+when 'ubuntu'
+    default['miovim']['package'] = 'vim'
+when 'centos'
+    default['miovim']['package'] = 'vim-enhanced'
+end
+
+####################################################
 ## recipes/vim.rb ##################
 
 package node['miovim']['package'] 

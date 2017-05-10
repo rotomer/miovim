@@ -17,7 +17,16 @@ platforms:
   - name: centos-7.2
 
 suites:
-  - name: default
+  - name: vim_only
+    run_list:
+      - recipe[miovim::vim]
+    verifier:
+      inspec_tests:
+        - test/recipes
+    attributes:
+
+suites:
+  - name: plugins
     run_list:
       - recipe[miovim::default]
     verifier:
